@@ -1,3 +1,4 @@
+import './load-env.js';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule, ObserveInstrument } from './app.module.js';
@@ -9,7 +10,7 @@ async function bootstrap() {
 
   app.setGlobalPrefix('api');
 
-  const corsOrigins = (process.env.CORS_ORIGIN ?? 'https://cautious-xylophone-p7rp9vvp6jx27vx9-3000.github.dev')
+  const corsOrigins = (process.env.CORS_ORIGIN ?? '')
     .split(',')
     .map((origin) => origin.trim())
     .filter(Boolean);
