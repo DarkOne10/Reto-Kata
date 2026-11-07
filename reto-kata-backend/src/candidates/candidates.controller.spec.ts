@@ -14,6 +14,7 @@ describe('CandidatesController', () => {
     findAll: vi.fn(),
     findMine: vi.fn(),
     findOne: vi.fn(),
+    getResumeUrl: vi.fn(),
     updateStatus: vi.fn(),
   };
 
@@ -63,6 +64,11 @@ describe('CandidatesController', () => {
   it('lists only the authenticated applicant submissions', async () => {
     await controller.findMine({ user: { id: 24 } } as never);
     expect(candidatesService.findMine).toHaveBeenCalledWith(24);
+  });
+
+  it('requests a temporary resume URL for the selected candidate', async () => {
+    await controller.getResumeUrl(17);
+    expect(candidatesService.getResumeUrl).toHaveBeenCalledWith(17);
   });
 
   it('rejects invalid candidate data', () => {

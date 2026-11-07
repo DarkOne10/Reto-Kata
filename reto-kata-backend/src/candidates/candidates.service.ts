@@ -70,6 +70,15 @@ export class CandidatesService {
     return candidate;
   }
 
+  async getResumeUrl(id: number) {
+    const candidate = await this.findOne(id);
+    if (!candidate.resumePath) {
+      throw new NotFoundException('El candidato no tiene una hoja de vida adjunta.');
+    }
+
+    return { url: await this.resumeStorage.createSignedUrl(candidate.resumePath) };
+  }
+
   async updateStatus(id: number, status: CandidateStatus) {
     await this.findOne(id);
     return this.prisma.candidate.update({

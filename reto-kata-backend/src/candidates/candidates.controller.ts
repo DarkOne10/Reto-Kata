@@ -154,6 +154,15 @@ export class CandidatesController {
     return this.candidatesService.findOne(id);
   }
 
+  @Get(':id/resume')
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(UserRole.ADMIN, UserRole.ANALYST)
+  @ApiOperation({ summary: 'Genera un enlace temporal para la hoja de vida' })
+  @ApiOkResponse({ description: 'URL firmada de corta duración.' })
+  getResumeUrl(@Param('id', ParseIntPipe) id: number) {
+    return this.candidatesService.getResumeUrl(id);
+  }
+
   @Patch(':id/status')
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(UserRole.ADMIN, UserRole.ANALYST)

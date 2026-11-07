@@ -39,6 +39,18 @@ export class ResumeStorageService {
     }
   }
 
+  async createSignedUrl(path: string) {
+    const { data, error } = await this.client()
+      .storage.from(process.env.SUPABASE_BUCKET ?? 'candidate-resumes')
+      .createSignedUrl(path, 900);
+
+    if (error || !data?.signedUrl) {
+      throw new BadGatewayException('No se pudo generar el enlace de la hoja de vida.');
+    }
+
+    return data.signedUrl;
+  }
+
   private client() {
     if (this.supabaseClient) {
       return this.supabaseClient;
