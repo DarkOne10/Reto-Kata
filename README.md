@@ -2,7 +2,7 @@
 
 Plataforma web para gestionar postulaciones a prácticas profesionales. Los postulantes crean una cuenta, envían sus datos y adjuntan su hoja de vida en PDF; el equipo de selección revisa cada candidatura y registra su decisión.
 
-**Autor:** Carlos Andrés Aponte Bustos · **Propietario del repositorio:** [DarkOne10](https://github.com/DarkOne10) · **Repositorio:** [DarkOne10/Reto-Kata](https://github.com/DarkOne10/Reto-Kata)
+**Autor:** Carlos Andrés Aponte Bustos · **Repositorio:** [DarkOne10/Reto-Kata](https://github.com/DarkOne10/Reto-Kata)
 
 **Aplicación:** [reto-kata-aval.vercel.app](https://reto-kata-aval.vercel.app) · **API:** [reto-kata.onrender.com](https://reto-kata.onrender.com) · [Swagger](https://reto-kata.onrender.com/api/docs)
 
