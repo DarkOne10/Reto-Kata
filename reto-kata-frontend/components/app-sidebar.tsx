@@ -18,6 +18,7 @@ import {
   ClipboardListIcon,
   FilePenLineIcon,
   LayoutDashboardIcon,
+  ListChecksIcon,
   Settings2Icon,
   CommandIcon,
 } from "lucide-react"
@@ -30,7 +31,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         { title: "Postulación", url: "/application", icon: <FilePenLineIcon /> },
         { title: "Seguimiento", url: "/application/follow-up", icon: <ClipboardListIcon /> },
       ]
-    : [{ title: "Panel", url: "/dashboard", icon: <LayoutDashboardIcon /> }]
+    : [
+        { title: "Panel", url: "/dashboard", icon: <LayoutDashboardIcon /> },
+        { title: "Solicitudes", url: "/requests", icon: <ListChecksIcon /> },
+      ]
   const navSecondary = user?.role === "ADMIN"
     ? [{ title: "Usuarios y permisos", url: "/settings", icon: <Settings2Icon /> }]
     : []
