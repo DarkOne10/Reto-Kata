@@ -1,0 +1,2 @@
+Databasepass#2005
+postgresql://postgres:[YOUR-PASSWORD]@db.isgucugtxvdagwbkbqfj.supabase.co:5432/postgres
