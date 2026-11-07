@@ -15,7 +15,7 @@ export function AuthGuard({
   const { user, isLoading } = useAuth()
   const router = useRouter()
   const hasAccess = Boolean(user && allowedRoles.includes(user.role))
-  const destination = user?.role === "APPLICANT" ? "/application" : "/dashboard"
+  const destination = user?.role === "APPLICANT" ? "/application/follow-up" : "/dashboard"
 
   useEffect(() => {
     if (!isLoading && !user) router.replace("/login")

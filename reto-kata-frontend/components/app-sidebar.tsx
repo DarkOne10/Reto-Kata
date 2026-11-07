@@ -16,7 +16,6 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
 import {
-  ClipboardListIcon,
   FilePenLineIcon,
   LayoutDashboardIcon,
   ListChecksIcon,
@@ -29,8 +28,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { user } = useAuth()
   const navMain = user?.role === "APPLICANT"
     ? [
-        { title: "Postulación", url: "/application", icon: <FilePenLineIcon /> },
-        { title: "Seguimiento", url: "/application/follow-up", icon: <ClipboardListIcon /> },
+        { title: "Mi panel", url: "/application/follow-up", icon: <LayoutDashboardIcon /> },
+        { title: "Nueva postulación", url: "/application", icon: <FilePenLineIcon /> },
       ]
     : [
         { title: "Panel", url: "/dashboard", icon: <LayoutDashboardIcon /> },
@@ -47,7 +46,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <SidebarMenuItem>
             <SidebarMenuButton
               className="data-[slot=sidebar-menu-button]:p-1.5!"
-              render={<Link href={user?.role === "APPLICANT" ? "/application" : "/dashboard"} />}
+              render={<Link href={user?.role === "APPLICANT" ? "/application/follow-up" : "/dashboard"} />}
             >
               <CommandIcon className="size-5!" />
               <span className="text-base font-semibold">Reto-Kata</span>

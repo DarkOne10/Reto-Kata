@@ -23,7 +23,7 @@ export function AuthForm({ mode }: { mode: "login" | "register" }) {
 
   useEffect(() => {
     if (!isLoading && user) {
-      router.replace(user.role === "APPLICANT" ? "/application" : "/dashboard")
+      router.replace(user.role === "APPLICANT" ? "/application/follow-up" : "/dashboard")
     }
   }, [isLoading, router, user])
 
@@ -42,7 +42,7 @@ export function AuthForm({ mode }: { mode: "login" | "register" }) {
         ? await signUp(name, email, password)
         : await signIn(email, password)
       router.replace(
-        authenticatedUser.role === "APPLICANT" ? "/application" : "/dashboard",
+        authenticatedUser.role === "APPLICANT" ? "/application/follow-up" : "/dashboard",
       )
     } catch (submitError) {
       setError(
