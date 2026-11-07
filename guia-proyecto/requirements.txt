@@ -1,0 +1,44 @@
+--- BACKEND ---
+npm: npm install
+prisma: npm install prisma --save-dev 
+>>> crear esquema prisma: npx prisma migrate dev
+
+swaggerUI: npm install swagger-ui-express swagger-autogen
+nestjs: npm i -g @nestjs/cli
+
+-- FRONTEND ---
+npm: npm install
+>>> para usar chadcn en otro entorno: rm components.json luego 
+->schadcn: npx shadcn@latest init
+
+--Base de datos postgres
+>>Crear y ejecutar el contenedor PostgreSQL:
+docker run --name postgres-db \
+  -e POSTGRES_PASSWORD=postgres \
+  -e POSTGRES_USER=postgres \
+  -p 5432:5432 \
+  -d postgres
+
+Crear la base de datos
+docker exec -it postgres-db createdb -U postgres tienda_online
+
+>>>>Comandos útiles para gestionar el contenedor:
+# Detener el contenedor
+docker stop postgres-db
+
+# Iniciar el contenedor (cuando está detenido)
+docker start postgres-db
+
+# Eliminar el contenedor (debe estar detenido)
+docker rm postgres-db
+
+# Ver logs del contenedor
+docker logs postgres-db
+
+# Ver contenedores activos
+docker ps
+
+# Ver todos los contenedores (incluidos los detenidos)
+docker ps -a
+
+url en .ENV: DATABASE_URL="postgresql://postgres:postgres@localhost:5432/tienda_online"
