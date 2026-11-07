@@ -7,8 +7,27 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum CandidateStatus {
+  PENDING
+  VIABLE
+  NOT_VIABLE
+}
+
 model Message {
   id        Int      @id @default(autoincrement())
   content   String   @db.VarChar(500)
   createdAt DateTime @default(now())
+}
+
+model Candidate {
+  id         Int             @id @default(autoincrement())
+  fullName   String          @db.VarChar(150)
+  email      String          @unique @db.VarChar(254)
+  career     String          @db.VarChar(150)
+  semester   Int
+  resumePath String?
+  status     CandidateStatus @default(PENDING)
+  createdAt  DateTime        @default(now())
+  updatedAt  DateTime        @updatedAt
+  reviewedAt DateTime?
 }
