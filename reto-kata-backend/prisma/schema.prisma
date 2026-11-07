@@ -28,14 +28,18 @@ model Message {
 model Candidate {
   id         Int             @id @default(autoincrement())
   fullName   String          @db.VarChar(150)
-  email      String          @unique @db.VarChar(254)
+  email      String          @db.VarChar(254)
   career     String          @db.VarChar(150)
   semester   Int
   resumePath String?
   status     CandidateStatus @default(PENDING)
+  userId     Int?
+  user       User?           @relation(fields: [userId], references: [id], onDelete: SetNull)
   createdAt  DateTime        @default(now())
   updatedAt  DateTime        @updatedAt
   reviewedAt DateTime?
+
+  @@index([userId, createdAt])
 }
 
 model User {
@@ -46,4 +50,5 @@ model User {
   role         UserRole @default(APPLICANT)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
+  candidates   Candidate[]
 }

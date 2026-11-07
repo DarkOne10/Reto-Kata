@@ -15,6 +15,7 @@ export class CandidatesService {
     email: string;
     career: string;
     semester: number;
+    userId: number;
   }) {
     try {
       return await this.prisma.candidate.create({
@@ -37,6 +38,13 @@ export class CandidatesService {
 
   findAll() {
     return this.prisma.candidate.findMany({
+      orderBy: { createdAt: 'desc' },
+    });
+  }
+
+  findMine(userId: number) {
+    return this.prisma.candidate.findMany({
+      where: { userId },
       orderBy: { createdAt: 'desc' },
     });
   }

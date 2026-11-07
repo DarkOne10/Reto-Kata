@@ -7,6 +7,8 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  Req,
+  UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
 import { CandidateStatus, UserRole } from '@prisma/client';
@@ -21,6 +23,7 @@ import { CreateCandidateDto } from './dto/create-candidate.dto.js';
 import { UpdateCandidateStatusDto } from './dto/update-candidate-status.dto.js';
 import { CandidatesService } from './candidates.service.js';
 import { AuthGuard } from '../auth/auth.guard.js';
+import type { AuthenticatedRequest } from '../auth/auth.guard.js';
 import { Roles } from '../auth/roles.decorator.js';
 import { RolesGuard } from '../auth/roles.guard.js';
 
@@ -35,7 +38,10 @@ export class CandidatesController {
   @ApiOperation({ summary: 'Registra un candidato' })
   @ApiBody({ type: CreateCandidateDto })
   @ApiCreatedResponse({ description: 'Candidato creado.' })
-  create(@Body() body: CreateCandidateDto) {
+  create(
+    @Body() body: CreateCandidateDto,
+    @Req() request: AuthenticatedRequest,
+  ) {
     const fullName = this.requiredText(body?.fullName, 'El nombre');
     const email = this.requiredText(body?.email, 'El correo').toLowerCase();
     const career = this.requiredText(body?.career, 'La carrera');
@@ -57,7 +63,23 @@ export class CandidatesController {
       throw new BadRequestException('El semestre debe ser un entero entre 1 y 20.');
     }
 
-    return this.candidatesService.create({ fullName, email, career, semester });
+    const userId = request.user?.id;
+    if (!userId) {
+      throw new UnauthorizedException('Inicia sesión para continuar.');
+    }
+    if (email !== request.user?.email) {
+      throw new BadRequestException(
+        'El correo debe coincidir con el de la cuenta autenticada.',
+      );
+    }
+
+    return this.candidatesService.create({
+      fullName,
+      email,
+      career,
+      semester,
+      userId,
+    });
   }
 
   @Get()
@@ -67,6 +89,19 @@ export class CandidatesController {
   @ApiOkResponse({ description: 'Lista de candidatos.' })
   findAll() {
     return this.candidatesService.findAll();
+  }
+
+  @Get('mine')
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(UserRole.APPLICANT)
+  @ApiOperation({ summary: 'Lista las postulaciones del usuario actual' })
+  @ApiOkResponse({ description: 'Postulaciones del usuario autenticado.' })
+  findMine(@Req() request: AuthenticatedRequest) {
+    const userId = request.user?.id;
+    if (!userId) {
+      throw new UnauthorizedException('Inicia sesión para continuar.');
+    }
+    return this.candidatesService.findMine(userId);
   }
 
   @Get(':id')

@@ -14,20 +14,23 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
-import { LayoutDashboardIcon, Settings2Icon, CommandIcon } from "lucide-react"
+import {
+  ClipboardListIcon,
+  FilePenLineIcon,
+  LayoutDashboardIcon,
+  Settings2Icon,
+  CommandIcon,
+} from "lucide-react"
 import { useAuth } from "@/components/auth-provider"
 
-const data = {
-  navMain: [
-    {
-      title: "Panel",
-      url: "/dashboard",
-      icon: <LayoutDashboardIcon />,
-    },
-  ],
-}
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { user } = useAuth()
+  const navMain = user?.role === "APPLICANT"
+    ? [
+        { title: "Postulación", url: "/application", icon: <FilePenLineIcon /> },
+        { title: "Seguimiento", url: "/application/follow-up", icon: <ClipboardListIcon /> },
+      ]
+    : [{ title: "Panel", url: "/dashboard", icon: <LayoutDashboardIcon /> }]
   const navSecondary = user?.role === "ADMIN"
     ? [{ title: "Usuarios y permisos", url: "/settings", icon: <Settings2Icon /> }]
     : []
@@ -48,7 +51,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={data.navMain} />
+        <NavMain items={navMain} />
         {navSecondary.length > 0 && (
           <NavSecondary items={navSecondary} className="mt-auto" />
         )}
