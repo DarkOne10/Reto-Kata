@@ -13,6 +13,12 @@ enum CandidateStatus {
   NOT_VIABLE
 }
 
+enum UserRole {
+  ADMIN
+  ANALYST
+  APPLICANT
+}
+
 model Message {
   id        Int      @id @default(autoincrement())
   content   String   @db.VarChar(500)
@@ -30,4 +36,14 @@ model Candidate {
   createdAt  DateTime        @default(now())
   updatedAt  DateTime        @updatedAt
   reviewedAt DateTime?
+}
+
+model User {
+  id           Int      @id @default(autoincrement())
+  name         String   @db.VarChar(120)
+  email        String   @unique @db.VarChar(254)
+  passwordHash String
+  role         UserRole @default(APPLICANT)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 }

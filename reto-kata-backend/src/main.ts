@@ -1,4 +1,5 @@
 import './load-env.js';
+import cookieParser from 'cookie-parser';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule, ObserveInstrument } from './app.module.js';
@@ -8,6 +9,7 @@ async function bootstrap() {
     instrument: ObserveInstrument,
   });
 
+  app.use(cookieParser());
   app.setGlobalPrefix('api');
 
   const corsOrigins = (process.env.CORS_ORIGIN ?? '')

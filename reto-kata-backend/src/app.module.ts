@@ -2,8 +2,10 @@ import { Module } from '@nestjs/common';
 import { createObserveModule } from '@nestjs/observe';
 import { AppController } from './app.controller.js';
 import { AppService } from './app.service.js';
+import { AuthModule } from './auth/auth.module.js';
 import { CandidatesModule } from './candidates/candidates.module.js';
 import { MessagesModule } from './messages/messages.module.js';
+import { UsersModule } from './users/users.module.js';
 
 export const { ObserveModule, ObserveInstrument } = createObserveModule();
 
@@ -17,8 +19,10 @@ export const { ObserveModule, ObserveInstrument } = createObserveModule();
       appSecret: process.env.OBSERVE_APP_SECRET ?? 'YOUR_APP_SECRET',
       serviceId: 'reto-kata-backend',
     }),
+    AuthModule,
     CandidatesModule,
     MessagesModule,
+    UsersModule,
   ],
   controllers: [AppController],
   providers: [AppService],

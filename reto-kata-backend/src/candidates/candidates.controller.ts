@@ -7,8 +7,9 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  UseGuards,
 } from '@nestjs/common';
-import { CandidateStatus } from '@prisma/client';
+import { CandidateStatus, UserRole } from '@prisma/client';
 import {
   ApiBody,
   ApiCreatedResponse,
@@ -19,6 +20,9 @@ import {
 import { CreateCandidateDto } from './dto/create-candidate.dto.js';
 import { UpdateCandidateStatusDto } from './dto/update-candidate-status.dto.js';
 import { CandidatesService } from './candidates.service.js';
+import { AuthGuard } from '../auth/auth.guard.js';
+import { Roles } from '../auth/roles.decorator.js';
+import { RolesGuard } from '../auth/roles.guard.js';
 
 @ApiTags('candidates')
 @Controller('candidates')
@@ -26,6 +30,8 @@ export class CandidatesController {
   constructor(private readonly candidatesService: CandidatesService) {}
 
   @Post()
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(UserRole.APPLICANT)
   @ApiOperation({ summary: 'Registra un candidato' })
   @ApiBody({ type: CreateCandidateDto })
   @ApiCreatedResponse({ description: 'Candidato creado.' })
@@ -55,6 +61,8 @@ export class CandidatesController {
   }
 
   @Get()
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(UserRole.ADMIN, UserRole.ANALYST)
   @ApiOperation({ summary: 'Lista los candidatos registrados' })
   @ApiOkResponse({ description: 'Lista de candidatos.' })
   findAll() {
@@ -62,6 +70,8 @@ export class CandidatesController {
   }
 
   @Get(':id')
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(UserRole.ADMIN, UserRole.ANALYST)
   @ApiOperation({ summary: 'Consulta un candidato por id' })
   @ApiOkResponse({ description: 'Detalle del candidato.' })
   findOne(@Param('id', ParseIntPipe) id: number) {
@@ -69,6 +79,8 @@ export class CandidatesController {
   }
 
   @Patch(':id/status')
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(UserRole.ADMIN, UserRole.ANALYST)
   @ApiOperation({ summary: 'Actualiza la decisión de selección' })
   @ApiBody({ type: UpdateCandidateStatusDto })
   @ApiOkResponse({ description: 'Estado del candidato actualizado.' })
