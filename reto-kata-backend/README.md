@@ -31,6 +31,12 @@
 $ npm install
 ```
 
+## Carga de hojas de vida
+
+Configura `SUPABASE_URL`, `SUPABASE_SECRET_KEY` y `SUPABASE_BUCKET=candidate-resumes` en el `.env` local del backend. Usa una clave secreta nueva del proyecto Supabase; esta clave solo debe existir en el servidor y nunca en el frontend ni en Git. El bucket debe ser privado y permitir archivos PDF de hasta 5 MB.
+
+El endpoint autenticado `POST /api/candidates` recibe `multipart/form-data` con `fullName`, `email`, `career`, `semester` y el archivo `resume`. El servidor valida el PDF, lo sube a Storage y guarda su ruta en la base de datos.
+
 ## Compile and run the project
 
 ```bash

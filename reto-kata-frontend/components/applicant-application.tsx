@@ -23,6 +23,7 @@ export default function ApplicantApplication() {
   const [fullName, setFullName] = useState(user?.name ?? "")
   const [career, setCareer] = useState("")
   const [semester, setSemester] = useState("")
+  const [resume, setResume] = useState<File | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState("")
 
@@ -32,14 +33,20 @@ export default function ApplicantApplication() {
     setIsSubmitting(true)
 
     try {
+      if (!resume || resume.type !== "application/pdf" || resume.size > 5 * 1024 * 1024) {
+        throw new Error("Adjunta una hoja de vida PDF válida de máximo 5 MB.")
+      }
+
+      const formData = new FormData()
+      formData.set("fullName", fullName)
+      formData.set("email", user?.email ?? "")
+      formData.set("career", career)
+      formData.set("semester", semester)
+      formData.set("resume", resume)
+
       await apiFetch<Candidate>("/candidates", {
         method: "POST",
-        body: JSON.stringify({
-          fullName,
-          email: user?.email,
-          career,
-          semester: Number(semester),
-        }),
+        body: formData,
       })
       router.push("/application/follow-up")
     } catch (submitError) {
@@ -134,6 +141,24 @@ export default function ApplicantApplication() {
                   required
                   disabled={isSubmitting}
                 />
+              </div>
+
+              <div className="grid gap-2 sm:col-span-2">
+                <label htmlFor="candidate-resume" className="text-sm font-medium">
+                  Hoja de vida (PDF)
+                </label>
+                <Input
+                  id="candidate-resume"
+                  type="file"
+                  accept="application/pdf,.pdf"
+                  required
+                  disabled={isSubmitting}
+                  onChange={(event) => setResume(event.target.files?.[0] ?? null)}
+                  aria-describedby="candidate-resume-note"
+                />
+                <span id="candidate-resume-note" className="text-xs text-muted-foreground">
+                  Archivo PDF, máximo 5 MB.
+                </span>
               </div>
 
               {error && (

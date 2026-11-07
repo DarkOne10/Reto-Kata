@@ -5,10 +5,14 @@ import {
 } from '@nestjs/common';
 import { CandidateStatus, Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service.js';
+import { ResumeStorageService, type ResumeUpload } from './resume-storage.service.js';
 
 @Injectable()
 export class CandidatesService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly resumeStorage: ResumeStorageService,
+  ) {}
 
   async create(data: {
     fullName: string;
@@ -16,15 +20,24 @@ export class CandidatesService {
     career: string;
     semester: number;
     userId: number;
+    resume: ResumeUpload;
   }) {
+    const resumePath = await this.resumeStorage.upload(data.resume);
+
     try {
       return await this.prisma.candidate.create({
         data: {
-          ...data,
+          fullName: data.fullName,
           email: data.email.toLowerCase(),
+          career: data.career,
+          semester: data.semester,
+          userId: data.userId,
+          resumePath,
         },
       });
     } catch (error) {
+      await this.resumeStorage.remove(resumePath).catch(() => undefined);
+
       if (
         error instanceof Prisma.PrismaClientKnownRequestError &&
         error.code === 'P2002'

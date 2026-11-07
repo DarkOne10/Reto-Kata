@@ -33,6 +33,12 @@ describe('CandidatesController', () => {
   });
 
   it('normalizes candidate fields before creating', async () => {
+    const resume = {
+      originalname: 'cv.pdf',
+      mimetype: 'application/pdf',
+      buffer: Buffer.from('%PDF-1.7'),
+      size: 8,
+    };
     await controller.create(
       {
         fullName: ' Ana García ',
@@ -40,6 +46,7 @@ describe('CandidatesController', () => {
         career: ' Ingeniería ',
         semester: 6,
       },
+      resume,
       { user: { id: 42, email: 'ana@example.com' } } as never,
     );
 
@@ -49,6 +56,7 @@ describe('CandidatesController', () => {
       career: 'Ingeniería',
       semester: 6,
       userId: 42,
+      resume,
     });
   });
 
@@ -64,7 +72,27 @@ describe('CandidatesController', () => {
         email: 'invalid',
         career: 'Ingeniería',
         semester: 0,
-      }, { user: { id: 42, email: 'ana@example.com' } } as never),
+      }, undefined, { user: { id: 42, email: 'ana@example.com' } } as never),
+    ).toThrow(BadRequestException);
+  });
+
+  it('rejects a file that is not a PDF', () => {
+    expect(() =>
+      controller.create(
+        {
+          fullName: 'Ana García',
+          email: 'ana@example.com',
+          career: 'Ingeniería',
+          semester: 6,
+        },
+        {
+          originalname: 'cv.pdf',
+          mimetype: 'application/pdf',
+          buffer: Buffer.from('not a PDF'),
+          size: 9,
+        },
+        { user: { id: 42, email: 'ana@example.com' } } as never,
+      ),
     ).toThrow(BadRequestException);
   });
 

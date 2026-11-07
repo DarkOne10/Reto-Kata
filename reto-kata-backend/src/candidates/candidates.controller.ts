@@ -8,13 +8,17 @@ import {
   Patch,
   Post,
   Req,
+  UploadedFile,
   UnauthorizedException,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { CandidateStatus, UserRole } from '@prisma/client';
 import {
   ApiBody,
   ApiCreatedResponse,
+  ApiConsumes,
   ApiOkResponse,
   ApiOperation,
   ApiTags,
@@ -26,6 +30,9 @@ import { AuthGuard } from '../auth/auth.guard.js';
 import type { AuthenticatedRequest } from '../auth/auth.guard.js';
 import { Roles } from '../auth/roles.decorator.js';
 import { RolesGuard } from '../auth/roles.guard.js';
+import type { ResumeUpload } from './resume-storage.service.js';
+
+const MAX_RESUME_SIZE = 5 * 1024 * 1024;
 
 @ApiTags('candidates')
 @Controller('candidates')
@@ -35,17 +42,42 @@ export class CandidatesController {
   @Post()
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(UserRole.APPLICANT)
+  @UseInterceptors(
+    FileInterceptor('resume', {
+      limits: { fileSize: MAX_RESUME_SIZE },
+      fileFilter: (_request, file, callback) => {
+        callback(
+          null,
+          file.mimetype === 'application/pdf' && /\.pdf$/i.test(file.originalname),
+        );
+      },
+    }),
+  )
   @ApiOperation({ summary: 'Registra un candidato' })
-  @ApiBody({ type: CreateCandidateDto })
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        fullName: { type: 'string', maxLength: 150 },
+        email: { type: 'string', maxLength: 254 },
+        career: { type: 'string', maxLength: 150 },
+        semester: { type: 'integer', minimum: 1, maximum: 20 },
+        resume: { type: 'string', format: 'binary' },
+      },
+      required: ['fullName', 'email', 'career', 'semester', 'resume'],
+    },
+  })
   @ApiCreatedResponse({ description: 'Candidato creado.' })
   create(
     @Body() body: CreateCandidateDto,
+    @UploadedFile() file: ResumeUpload | undefined,
     @Req() request: AuthenticatedRequest,
   ) {
     const fullName = this.requiredText(body?.fullName, 'El nombre');
     const email = this.requiredText(body?.email, 'El correo').toLowerCase();
     const career = this.requiredText(body?.career, 'La carrera');
-    const semester = body?.semester;
+    const semester = Number(body?.semester);
 
     if (fullName.length > 150) {
       throw new BadRequestException('El nombre no puede superar 150 caracteres.');
@@ -61,6 +93,14 @@ export class CandidatesController {
     }
     if (!Number.isInteger(semester) || semester < 1 || semester > 20) {
       throw new BadRequestException('El semestre debe ser un entero entre 1 y 20.');
+    }
+    if (
+      !file ||
+      file.mimetype !== 'application/pdf' ||
+      file.size > MAX_RESUME_SIZE ||
+      file.buffer.subarray(0, 5).toString('ascii') !== '%PDF-'
+    ) {
+      throw new BadRequestException('Adjunta una hoja de vida PDF válida de máximo 5 MB.');
     }
 
     const userId = request.user?.id;
@@ -79,6 +119,7 @@ export class CandidatesController {
       career,
       semester,
       userId,
+      resume: file,
     });
   }
 
