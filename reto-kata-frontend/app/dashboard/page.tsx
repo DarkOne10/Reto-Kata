@@ -5,6 +5,8 @@ import { SectionCards } from "@/components/section-cards"
 
 import data from "./data.json"
 
+export const instant = false
+
 export default function Page() {
   return (
     <DashboardShell title="Panel">

@@ -1,9 +1,12 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import Link from "next/link"
+import { ArrowLeft } from "lucide-react"
 import { DashboardShell } from "@/components/dashboard-shell"
 import { AuthGuard } from "@/components/auth-guard"
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import {
   Select,
@@ -92,6 +95,16 @@ export default function SettingsPage() {
     <AuthGuard allowedRoles={["ADMIN"]}>
       <DashboardShell title="Usuarios y permisos">
         <section className="px-4 lg:px-6">
+          <div className="mb-4">
+            <Button
+              variant="outline"
+              nativeButton={false}
+              render={<Link href="/dashboard" />}
+            >
+              <ArrowLeft data-icon="inline-start" />
+              Volver al panel
+            </Button>
+          </div>
           <Card className="rounded-lg">
             <CardHeader>
               <CardTitle>Usuarios</CardTitle>
