@@ -34,7 +34,7 @@ El navegador nunca recibe la clave secreta de Supabase. El bucket `candidate-res
 
 ## Tecnologías
 
-- **Frontend:** Next.js, React, TypeScript, Tailwind CSS y Recharts.
+- **Frontend:** Next.js, React, TypeScript, Tailwind CSS, shadcn/ui y Recharts.
 - **Backend:** NestJS, TypeScript, Prisma y Swagger.
 - **Persistencia:** PostgreSQL administrado por Supabase.
 - **Archivos:** Supabase Storage.
